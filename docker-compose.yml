@@ -1,0 +1,72 @@
+version: "3.8"
+
+services:
+
+  wordpress:
+    image: wordpress:latest
+    container_name: wordpress
+    environment:
+      WORDPRESS_DB_HOST: mariadb
+      WORDPRESS_DB_USER: adm-webstudio
+      WORDPRESS_DB_PASSWORD: Emf12345
+      WORDPRESS_DB_NAME: cafenumeriquedb
+    volumes:
+      - wp-data:/var/www/html
+    expose:
+      - "80"
+    networks:
+      - lb-net
+      - backend-net
+    depends_on:
+      - mariadb
+
+  mariadb:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MARIADB_DATABASE: cafenumeriquedb
+      MARIADB_USER: adm-webstudio
+      MARIADB_PASSWORD: Emf12345
+      MARIADB_ROOT_PASSWORD: rootpass
+    volumes:
+      - db-data:/var/lib/mysql
+    expose:
+      - "3306"
+    networks:
+      - backend-net
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    container_name: phpmyadmin
+    environment:
+      PMA_HOST: mariadb
+      PMA_USER: adm-webstudio
+      PMA_PASSWORD: Emf12345
+    ports:
+      - "8080:80"
+    networks:
+      - lb-net
+      - backend-net
+    depends_on:
+      - mariadb
+
+  haproxy:
+    image: haproxy:latest
+    container_name: haproxy
+    ports:
+      - "80:80"
+    volumes:
+      - ./haproxy.cfg:/usr/local/etc/haproxy/haproxy.cfg
+    networks:
+      - lb-net
+    depends_on:
+      - wordpress
+      - phpmyadmin
+
+volumes:
+  wp-data:
+  db-data:
+
+networks:
+  lb-net:
+  backend-net:
