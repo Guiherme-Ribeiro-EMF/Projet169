@@ -43,7 +43,7 @@ services:
       PMA_USER: adm-webstudio
       PMA_PASSWORD: Emf12345
     ports:
-      - "8080:80"
+      - "80"
     networks:
       - lb-net
       - backend-net
