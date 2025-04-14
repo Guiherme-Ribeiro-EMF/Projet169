@@ -42,7 +42,7 @@ services:
       PMA_HOST: mariadb
       PMA_USER: adm-webstudio
       PMA_PASSWORD: Emf12345
-    ports:
+    expose:
       - "80"
     networks:
       - lb-net
